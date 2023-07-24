@@ -1,0 +1,62 @@
+site_name: Desafio Final Ignite - Andrew
+repo_url: https://github.com/kubernetes-sigs/aws-load-balancer-controller
+nav:
+  - Home:
+    - Introdução: index.md
+    #- How it works: how-it-works.md
+  - Guia:
+    - Terraform: guide/infra.md
+    - Ansible: guide/config.md
+  - Esteira/Pipeline/Build:
+    - Codebuild: pipeline/codebuild.md
+
+  #- Ansible:
+
+theme:
+  name: material
+  favicon: assets/images/cloud.png
+  logo: assets/images/cloud.png
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+  language: en
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+      primary: indigo
+      accent: purple
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+      primary: light-blue
+      accent: lime
+#plugins:
+#  - social
+extra:
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/AndrewVictorSilva
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/andrew-silva-295658b8/
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - tables
+  - pymdownx.superfences
