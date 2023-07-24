@@ -40,6 +40,15 @@ Abaixo está a arquiterura geral:
 
 <div style="width: 640px; height: 480px; margin: 10px; position: relative;"><iframe allowfullscreen frameborder="0" style="width:640px; height:480px" src="https://lucid.app/documents/embedded/53448e69-6a1f-43d0-a8a8-d0cbe9418881" id="LZ8_Yo9J0Fpn"></iframe></div>
 
+## Pontos Positivos
+**Fácil de usar e personalizar**: O WordPress é conhecido por sua interface intuitiva e amigável, tornando-o acessível para usuários iniciantes e experientes. Com um editor de arrastar e soltar (Gutenberg) e uma vasta biblioteca de temas e plugins, você pode personalizar facilmente a aparência e as funcionalidades do seu site sem precisar de habilidades avançadas de desenvolvimento.
+
+**Comunidade e suporte**: O WordPress possui uma comunidade enorme e ativa de desenvolvedores, designers e usuários. Isso significa que você pode encontrar facilmente soluções para problemas, obter dicas úteis e até mesmo ter acesso a um vasto número de recursos gratuitos, como temas, plugins e tutoriais.
+
+**SEO-friendly**: O WordPress foi criado com o foco em otimização para mecanismos de busca (SEO). Ele oferece várias opções e plugins para melhorar o desempenho do seu site nos resultados de pesquisa, como a criação de URLs amigáveis, otimização de títulos e meta descrições, integração com ferramentas de análise e muito mais.
+
+**Flexibilidade e escalabilidade**: O WordPress é altamente flexível e pode ser usado para criar diversos tipos de sites, desde blogs pessoais e sites de pequenas empresas até grandes portais de notícias e lojas online. Sua estrutura modular permite que você adicione novas funcionalidades à medida que seu site cresce, tornando-o escalável para acompanhar suas necessidades em expansão.
+
 ## Pontos Negativos
 
 Embora o WordPress seja uma plataforma popular e amplamente utilizada para a criação de sites, é importante estar ciente de alguns pontos negativos associados ao seu uso, especialmente ao "replataformá-lo" em um ambiente mais moderno:

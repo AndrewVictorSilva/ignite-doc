@@ -1,14 +1,17 @@
-# Instalação de Configuração com Ansible
+# Instalação e Configuração com Ansible
 
 Nesta etapa, faremos as instalações usando Ansible, que executa os comandos de Helm e faz algumas configurações
-  como a do ***ingress controller***
+  como a do ***ingress controller***. Os charts são instalados com o tipo do serviço como NodePort
+  para que o Load Balancer Controller crie o Ingress e o Application Load Balancer.
+
 
 Para executar as playbooks é preciso ***"apontar"*** os comandos para o cluster EKS usando a AWS CLI:
 
 #### Comando AWS CLI
 - `aws eks --region` **sua_regiao** `update-kubeconfig --name` seu_cluster - Atualiza o contexto do kube config.
 
-### Wordpress Helm Playbook
+### Wordpress
+Nessa playbook o Ansible executa os comandos de Helm que instalam o "pacote" do Wordpress e MariaDB já configurados.
 
 ``` yaml title="wordpress.yaml"
 ---
@@ -23,111 +26,127 @@ Para executar as playbooks é preciso ***"apontar"*** os comandos para o cluster
     - name: Update repo
       shell: "helm repo update"
 
-    - name: Deploy latest version of wordpress chart inside wordpress namespace (and create it)
-      kubernetes.core.helm:
-        name: wordpress
-        chart_ref: oci://registry-1.docker.io/bitnamicharts/wordpress
-        release_namespace: wordpress
-        create_namespace: true
-      environment:
-        KUBECONFIG: /root/.kube/config
+    - name: Deploy latest version of wordpress chart inside ingress namespace (and create it)
+      shell: "helm upgrade --install wordpress oci://registry-1.docker.io/bitnamicharts/wordpress -n wordpress --set service.type=NodePort --create-namespace"
+      # environment:
+      #   KUBECONFIG: /root/.kube/config
+
+    - name: Apply ingress rules with kubectl (on wordpress app namespace)
+      command: kubectl apply -f alb-wordpress.yaml
 
 ```
+### ALB 🔒
 
-### Ingress Helm Playbook
+``` yaml title="alb-wordpress.yaml"
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wordpress-ingress
+  namespace: wordpress
+  annotations:
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm::certificate # - your certificate ARN
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/scheme: internet-facing
+spec:
+  ingressClassName: alb
+  rules:
+    - host: wp.ignitehome.online
+      http:
+        paths:
+          - path: /admin
+            pathType: Exact
+            backend:
+              service:
+                name: wordpress
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: wordpress
+                port:
+                  number: 80
+```
 
-``` yaml title="ingress.yaml"
+### Prometheus
+
+``` yaml title="prometheus.yaml"
 ---
 - name: Install and config wordpress
   hosts: localhost
 
   tasks:
-
-    - name: Add nginx repo
-      shell: "helm repo add nginx https://helm.nginx.com/stable"
+    - name: Add prometheus repo
+      shell: "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts"
 
     - name: Update repo
       shell: "helm repo update"
 
-    - name: Deploy latest version of nginx-ingress chart inside ingress namespace (and create it)
-      shell: "helm upgrade --install eks-ingress nginx/nginx-ingress --version 0.17.0 -n ingress-nginx --create-namespace -n ingress"
-      environment:
-        KUBECONFIG: /root/.kube/config
+    - name: Deploy latest version of prometheus chart inside ingress namespace (and create it)
+      shell: "helm upgrade --install prometheus prometheus-community/prometheus -n prometheus --create-namespace"
+       environment:
+         KUBECONFIG: /root/.kube/config
 
 ```
 
-### Ingress Configuration Playbook
+### Grafana
 
-``` yaml title="ingress.yaml"
+``` yaml title="grafana.yaml"
 ---
-- name: Download and Update ingress-app.yaml
+- name: Install and config wordpress
   hosts: localhost
-  gather_facts: false
 
   tasks:
-    - name: Get Current Working Directory
-      command: pwd
-      register: pwd_output
+    - name: Add grafana repo
+      shell: "helm repo add grafana https://grafana.github.io/helm-charts"
 
-    - name: Download ingress-app.yaml
-      get_url:
-        url: "github_plubic_file.yaml"
-        dest: "{{ pwd_output.stdout }}/ingress-app.yaml"
+    - name: Update repo
+      shell: "helm repo update"
 
-    - name: Read ingress-app.yaml template
-      slurp:
-        path: "{{ pwd_output.stdout }}/ingress-app.yaml"
-      register: ingress_app_template
-
-    - name: Retrieve Load Balancer Address and Perform nslookup
-      command: kubectl get svc -n wordpress wordpress --output json
-      register: svc_output
-      #environment:
-      #  KUBECONFIG: /root/.kube/config
-
-    - name: Store Load Balancer Address
-      set_fact:
-        load_balancer_address: "{{ svc_output.stdout | from_json | json_query('status.loadBalancer.ingress[0].hostname') }}"
-
-    - name: Wait for Load Balancer to be Online
-      wait_for:
-        timeout: 300 # Adjust the timeout value as needed
-        delay: 10 # Adjust the delay between checks as needed
-        host: "{{ load_balancer_address }}"
-        port: 80
-        state: started
-
-    - name: Perform nslookup
-      command: nslookup "{{ load_balancer_address }}"
-      register: nslookup_output
-
-    - name: Extract IP Addresses
-      set_fact:
-        ip_addresses: "{{ nslookup_output.stdout_lines | select('regex', '^Address: ') | map('regex_replace', '^Address: (.+)', '\\1') | list }}"
-
-    - name: Store IP Addresses in Variables
-      set_fact:
-        first_ip: "{{ ip_addresses[0] }}"
-        second_ip: "{{ ip_addresses[1] }}"
-
-    - name: Substitute IP addresses in ingress-app.yaml
-      set_fact:
-        ingress_app_content: "{{ ingress_app_template.content | b64decode | replace('$first_ip', first_ip) | replace('$second_ip', second_ip) }}"
-
-    - name: Write updated ingress-app.yaml
-      copy:
-        content: "{{ ingress_app_content }}"
-        dest: "{{ pwd_output.stdout }}/ingress-app.yaml"
-        force: yes
-
+    - name: Deploy latest version of grafana chart inside ingress namespace (and create it)
+      shell: "helm upgrade --install grafana grafana/grafana  --create-namespace -n grafana --set persistence.enabled=true --set adminPassword='EKS123' --values https://raw.githubusercontent.com/AndrewVictorSilva/apoioprojetofinal/main/grafana-data-source.yaml  --set service.type=NodePort"
+      environment:
+        KUBECONFIG: /root/.kube/config
     - name: Apply ingress rules with kubectl (on wordpress app namespace)
-      command: kubectl apply -f {{ pwd_output.stdout }}/ingress-app.yaml -n wordpress
-
-    - name: Print Load Balancer Address and IP Addresses
-      debug:
-        msg: "Load Balancer Address: {{ load_balancer_address }}\nIP Addresses: {{ ip_addresses }}"
+      command: kubectl apply -f alb-grafana.yaml
 
 ```
+### Grafana ALB 🔒
 
+``` yaml title="alb-grafana.yaml"
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  namespace: grafana
+  annotations:
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm::certificate # - your certificate ARN
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/scheme: internet-facing
+spec:
+  ingressClassName: alb
+  rules:
+    - host: gf.ignitehome.online
+      http:
+        paths:
+          - path: /login
+            pathType: Exact
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 80
 
-Some example text
+```

@@ -7,6 +7,7 @@ nav:
   - Guia:
     - Terraform: guide/infra.md
     - Ansible: guide/config.md
+    - Acessando a aplicações: guide/route53.md
   - Esteira/Pipeline/Build:
     - Codebuild: pipeline/codebuild.md
 
@@ -28,6 +29,7 @@ theme:
     - content.code.annotate
     - content.code.copy
     - content.code.select
+    - navigation.footer
   language: en
   palette:
     - scheme: default
@@ -50,6 +52,9 @@ extra:
       link: https://github.com/AndrewVictorSilva
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/andrew-silva-295658b8/
+    - icon: fontawesome/solid/paper-plane
+      link: mailto:andrew.silva@atos.net
+
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -60,3 +65,5 @@ markdown_extensions:
   - pymdownx.snippets
   - tables
   - pymdownx.superfences
+  - attr_list
+  - md_in_html

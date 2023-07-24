@@ -425,20 +425,55 @@ resource "aws_iam_role_policy_attachment" "ebs_csi_controller_policy" {
 ```
 
 
+### Load Balancer Controller
 
+Aqui está um examplo de que o Terraform pode ser usado para executar o charts de Helm.
+Criamos o chart usando as permissõesc criadas anteriormente e dinamicamente alocamos "trust relationship" na role que será usada na service account.
 
+``` tf title="helm.tf"
+provider "helm" {
+  kubernetes {
+    host                   = aws_eks_cluster.demo.endpoint
+    cluster_ca_certificate = base64decode(aws_eks_cluster.demo.certificate_authority[0].data)
+    exec {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      args        = ["eks", "get-token", "--cluster-name", aws_eks_cluster.demo.id]
+      command     = "aws"
+    }
+  }
+}
 
+resource "helm_release" "aws-load-balancer-controller2" {
+  name = "aws-load-balancer-controller"
 
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Olá Laix.
+  repository = "https://aws.github.io/eks-charts"
+  chart      = "aws-load-balancer-controller"
+  namespace  = "kube-system"
+  version    = "1.5.4"
 
-## Another header
+  set {
+    name  = "clusterName"
+    value = aws_eks_cluster.demo.id
+  }
 
-Some example text
+  set {
+    name  = "image.tag"
+    value = "v2.5.3"
+  }
 
-### Victor Demo
+  set {
+    name  = "serviceAccount.name"
+    value = "aws-load-balancer-controller"
+  }
 
-Olá victor
+  set {
+    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = aws_iam_role.aws_load_balancer_controller.arn
+  }
 
-- Topico 1
+  depends_on = [
+    aws_eks_node_group.private-nodes,
+    aws_iam_role_policy_attachment.aws_load_balancer_controller_attach
+  ]
+}
+```
