@@ -1,5 +1,5 @@
 site_name: Desafio Final Ignite - Andrew
-repo_url: https://github.com/kubernetes-sigs/aws-load-balancer-controller
+repo_url: https://github.com/AndrewVictorSilva/pipeline-ignite
 nav:
   - Home:
     - Introdução: index.md
@@ -8,7 +8,7 @@ nav:
     - Terraform: guide/infra.md
     - Ansible: guide/config.md
     - Acessando a aplicações: guide/route53.md
-  - Esteira/Pipeline/Build:
+  - Pipeline:
     - Codebuild: pipeline/codebuild.md
 
   #- Ansible:
@@ -67,3 +67,4 @@ markdown_extensions:
   - pymdownx.superfences
   - attr_list
   - md_in_html
+  - admonition

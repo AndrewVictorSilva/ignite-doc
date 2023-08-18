@@ -1,7 +1,7 @@
 # Replataform Wordpress - AWS
 
 > Status da última build <br>
-> ![](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiYXBJWXpBTzF6cTZnNWt1T2oxcVl0TGQraVFxdk9kRVFHUHlJYmhGeWxKcDVqQVB6a2FaWXJOaGk1YmM4TXFuOEpqcitwalU3cDRUQ1gyQldtVDVhTXY0PSIsIml2UGFyYW1ldGVyU3BlYyI6ImZWUU5qbG5FSHJQN200UzkiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=main)
+> ![](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiaS9jclIxUjRicE0xY25JVis2MDRsUGZ6L0JWYlJHZ2J5VS9vNkJCdGFUN3c3VDR6ck05eDJVOG85bUlVQXdOWHpoaENyNE1mcks0N1BTS2dCTmE3eTRnPSIsIml2UGFyYW1ldGVyU3BlYyI6Imp3SVdRdEZRYVVHQkxDQ2MiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=main)
 
 Bem vindo(a) a documentação do desafio final do Ignite Brasil.
 
@@ -18,10 +18,8 @@ Ao adotar boas práticas de desenvolvimento, otimização e segurança, podemos 
 - <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html" target="_blank">AWS CLI</a>
 - <a href="https://kubernetes.io/docs/tasks/tools/" target="_blank">Kubectl</a>
 
-### Pré requisitos
-
-- Chave de acesso programático para AWS CLI
-- 
+## Pré requisitos
+  - Chave de acesso programático para AWS CLI
 
 ## O que é IaC?
 
@@ -38,7 +36,7 @@ IaC (Infrastructure as Code), ou Infraestrutura como Código, é uma abordagem q
 
 Abaixo está a arquiterura geral:
 
-<div style="width: 640px; height: 480px; margin: 10px; position: relative;"><iframe allowfullscreen frameborder="0" style="width:640px; height:480px" src="https://lucid.app/documents/embedded/53448e69-6a1f-43d0-a8a8-d0cbe9418881" id="LZ8_Yo9J0Fpn"></iframe></div>
+<div style="width: 640px; height: 480px; margin: 10px; position: relative;"><iframe allowfullscreen frameborder="0" style="width:640px; height:480px" src="https://lucid.app/documents/embedded/43344cec-306c-4aee-a223-298779cc1af1" id="FHNm3uu8I2WL"></iframe></div>
 
 ## Pontos Positivos
 **Fácil de usar e personalizar**: O WordPress é conhecido por sua interface intuitiva e amigável, tornando-o acessível para usuários iniciantes e experientes. Com um editor de arrastar e soltar (Gutenberg) e uma vasta biblioteca de temas e plugins, você pode personalizar facilmente a aparência e as funcionalidades do seu site sem precisar de habilidades avançadas de desenvolvimento.
@@ -61,16 +59,3 @@ Embora o WordPress seja uma plataforma popular e amplamente utilizada para a cri
 
 - **Dependência de Plugins**: O WordPress é conhecido por sua vasta biblioteca de plugins, que adicionam funcionalidades extras ao site. No entanto, o uso excessivo de plugins pode tornar o ambiente mais complexo e aumentar o risco de incompatibilidades, vulnerabilidades de segurança e problemas de desempenho.
 
-## Commands
-
-- `mkdocs new [dir-name]` - Create a new project.
-- `mkdocs serve` - Start the live-reloading docs server.
-- `mkdocs build` - Build the documentation site.
-- `mkdocs -h` - Print help message and exit.
-
-## Commands
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Olá Laix.
